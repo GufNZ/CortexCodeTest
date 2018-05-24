@@ -19,6 +19,7 @@
 	<s:Boolean x:Key="/Default/CodeEditing/Intellisense/ParameterInfo/DelegatesAsLambdas/@EntryValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeEditing/Intellisense/ParameterInfo/UseArrowsForSignatureNavigation/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeEditing/Localization/CSharpLocalizationOptions/DontAnalyseVerbatimStrings/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/CodeInspection/Browsers/Browsers/@EntryValue">C27+,E12+,FF21+,IE11+,O15+,S8+</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=07D57945_002DD551_002D44F2_002D8B3E_002D71FA0A77215C_002Fd_003AProcessor_002Fd_003Axslt/@EntryIndexedValue">ExplicitlyExcluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=5E101ACB_002D8271_002D43AD_002D9E21_002D58CA3E66B2EF_002Fd_003AEmail_0020Templates/@EntryIndexedValue">ExplicitlyExcluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=5F4D8F07_002D1673_002D4819_002D9A98_002D4EB3519BF090_002Fd_003AViews_002Fd_003ATemplates_002Fd_003ABusinessCardPreview_002Ff_003AEditCard_002Ecshtml/@EntryIndexedValue">ExplicitlyExcluded</s:String>
