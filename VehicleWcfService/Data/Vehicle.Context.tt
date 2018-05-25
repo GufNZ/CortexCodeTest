@@ -65,10 +65,10 @@ if (!loader.IsLazyLoadingEnabled(container))
 <#
 }
 
+
 foreach (var entitySet in container.BaseEntitySets.OfType<EntitySet>())
 {
-	// Note: the DbSet members are defined below such that the getter and
-	// setter always have the same accessibility as the DbSet definition
+	// Note: the DbSet members are defined below such that the getter and setter always have the same accessibility as the DbSet definition:
 	if (Accessibility.ForReadOnlyProperty(entitySet) != "public")
 	{
 #>
@@ -79,10 +79,12 @@ foreach (var entitySet in container.BaseEntitySets.OfType<EntitySet>())
 #>
 	}
 
+
 	protected override void OnModelCreating(DbModelBuilder modelBuilder)
 	{
 		throw new UnintentionalCodeFirstException();
 	}
+
 
 <#
 	foreach (var entitySet in container.BaseEntitySets.OfType<EntitySet>())
@@ -148,9 +150,9 @@ private void WriteFunctionImport(TypeMapper typeMapper, CodeStringGenerator code
 public void WriteFunctionParameter(string name, string isNotNull, string notNullInit, string nullInit)
 {
 #>
-		var <#=name#> = <#=isNotNull#> ?
-			<#=notNullInit#> :
-			<#=nullInit#>;
+		var <#=name#> = <#=isNotNull#>
+			? <#=notNullInit#>
+			: <#=nullInit#>;
 
 <#+
 }
@@ -163,6 +165,7 @@ public class CodeStringGenerator
 	private readonly TypeMapper _typeMapper;
 	private readonly MetadataTools _ef;
 
+
 	public CodeStringGenerator(CodeGenerationTools code, TypeMapper typeMapper, MetadataTools ef)
 	{
 		ArgumentNotNull(code, "code");
@@ -174,6 +177,7 @@ public class CodeStringGenerator
 		_ef = ef;
 	}
 
+
 	public string Property(EdmProperty edmProperty)
 	{
 		return string.Format(
@@ -183,7 +187,8 @@ public class CodeStringGenerator
 			_typeMapper.GetTypeName(edmProperty.TypeUsage),
 			_code.Escape(edmProperty),
 			_code.SpaceAfter(Accessibility.ForGetter(edmProperty)),
-			_code.SpaceAfter(Accessibility.ForSetter(edmProperty)));
+			_code.SpaceAfter(Accessibility.ForSetter(edmProperty))
+		);
 	}
 
 	public string NavigationProperty(NavigationProperty navProp)
@@ -196,7 +201,8 @@ public class CodeStringGenerator
 			navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many ? ("ICollection<" + endType + ">") : endType,
 			_code.Escape(navProp),
 			_code.SpaceAfter(Accessibility.ForGetter(navProp)),
-			_code.SpaceAfter(Accessibility.ForSetter(navProp)));
+			_code.SpaceAfter(Accessibility.ForSetter(navProp))
+		);
 	}
 	
 	public string AccessibilityAndVirtual(string accessibility)
@@ -212,7 +218,8 @@ public class CodeStringGenerator
 			Accessibility.ForType(entity),
 			_code.SpaceAfter(_code.AbstractOption(entity)),
 			_code.Escape(entity),
-			_code.StringBefore(" : ", _typeMapper.GetTypeName(entity.BaseType)));
+			_code.StringBefore(" : ", _typeMapper.GetTypeName(entity.BaseType))
+		);
 	}
 	
 	public string EnumOpening(SimpleType enumType)
@@ -247,7 +254,8 @@ public class CodeStringGenerator
 			AccessibilityAndVirtual(Accessibility.ForMethod(edmFunction)),
 			_typeMapper.GetTypeName(_typeMapper.GetReturnType(edmFunction), modelNamespace),
 			_code.Escape(edmFunction),
-			string.Join(", ", parameters.Select(p => TypeMapper.FixNamespaces(p.FunctionParameterType) + " " + p.FunctionParameterName).ToArray()));
+			string.Join(", ", parameters.Select(p => TypeMapper.FixNamespaces(p.FunctionParameterType) + " " + p.FunctionParameterName).ToArray())
+		);
 	}
 	
 	public string ComposableCreateQuery(EdmFunction edmFunction, string modelNamespace)
@@ -261,7 +269,8 @@ public class CodeStringGenerator
 			edmFunction.NamespaceName,
 			edmFunction.Name,
 			string.Join(", ", parameters.Select(p => "@" + p.EsqlParameterName).ToArray()),
-			_code.StringBefore(", ", string.Join(", ", parameters.Select(p => p.ExecuteParameterName).ToArray())));
+			_code.StringBefore(", ", string.Join(", ", parameters.Select(p => p.ExecuteParameterName).ToArray()))
+		);
 	}
 	
 	public string FunctionMethod(EdmFunction edmFunction, string modelNamespace, bool includeMergeOption)
@@ -281,7 +290,8 @@ public class CodeStringGenerator
 			AccessibilityAndVirtual(Accessibility.ForMethod(edmFunction)),
 			returnType == null ? "int" : "ObjectResult<" + _typeMapper.GetTypeName(returnType, modelNamespace) + ">",
 			_code.Escape(edmFunction),
-			paramList);
+			paramList
+		);
 	}
 	
 	public string ExecuteFunction(EdmFunction edmFunction, string modelNamespace, bool includeMergeOption)
@@ -300,7 +310,8 @@ public class CodeStringGenerator
 			"return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction{0}(\"{1}\"{2});",
 			returnType == null ? "" : "<" + _typeMapper.GetTypeName(returnType, modelNamespace) + ">",
 			edmFunction.Name,
-			callParams);
+			callParams
+		);
 	}
 	
 	public string DbSet(EntitySet entitySet)
@@ -310,7 +321,8 @@ public class CodeStringGenerator
 			"{0} virtual DbSet<{1}> {2} {{ get; set; }}",
 			Accessibility.ForReadOnlyProperty(entitySet),
 			_typeMapper.GetTypeName(entitySet.ElementType),
-			_code.Escape(entitySet));
+			_code.Escape(entitySet)
+		);
 	}
 
 	public string DbSetInitializer(EntitySet entitySet)
@@ -319,7 +331,8 @@ public class CodeStringGenerator
 			CultureInfo.InvariantCulture,
 			"{0} = Set<{1}>();",
 			_code.Escape(entitySet),
-			_typeMapper.GetTypeName(entitySet.ElementType));
+			_typeMapper.GetTypeName(entitySet.ElementType)
+		);
 	}
 
 	public string UsingDirectives(bool inHeader, bool includeCollections = true)
@@ -338,16 +351,19 @@ public class CodeStringGenerator
 
 public class TypeMapper
 {
-	private const string ExternalTypeNameAttributeName = @"http://schemas.microsoft.com/ado/2006/04/codegeneration:ExternalTypeName";
+	private const string EXTERNAL_TYPE_NAME_ATTRIBUTE_NAME = "http://schemas.microsoft.com/ado/2006/04/codegeneration:ExternalTypeName";
 
-	private readonly System.Collections.IList _errors;
-	private readonly CodeGenerationTools _code;
-	private readonly MetadataTools _ef;
 
 	public static string FixNamespaces(string typeName)
 	{
 		return typeName.Replace("System.Data.Spatial.", "System.Data.Entity.Spatial.");
 	}
+
+
+	private readonly System.Collections.IList _errors;
+	private readonly CodeGenerationTools _code;
+	private readonly MetadataTools _ef;
+
 
 	public TypeMapper(CodeGenerationTools code, MetadataTools ef, System.Collections.IList errors)
 	{
@@ -360,9 +376,12 @@ public class TypeMapper
 		_errors = errors;
 	}
 
+
 	public string GetTypeName(TypeUsage typeUsage)
 	{
-		return typeUsage == null ? null : GetTypeName(typeUsage.EdmType, _ef.IsNullable(typeUsage), modelNamespace: null);
+		return typeUsage == null
+			? null
+			: GetTypeName(typeUsage.EdmType, _ef.IsNullable(typeUsage), modelNamespace: null);
 	}
 
 	public string GetTypeName(EdmType edmType)
@@ -372,7 +391,9 @@ public class TypeMapper
 
 	public string GetTypeName(TypeUsage typeUsage, string modelNamespace)
 	{
-		return typeUsage == null ? null : GetTypeName(typeUsage.EdmType, _ef.IsNullable(typeUsage), modelNamespace);
+		return typeUsage == null
+			? null
+			: GetTypeName(typeUsage.EdmType, _ef.IsNullable(typeUsage), modelNamespace);
 	}
 
 	public string GetTypeName(EdmType edmType, string modelNamespace)
@@ -387,24 +408,29 @@ public class TypeMapper
 			return null;
 		}
 
+
 		var collectionType = edmType as CollectionType;
 		if (collectionType != null)
 		{
 			return String.Format(CultureInfo.InvariantCulture, "ICollection<{0}>", GetTypeName(collectionType.TypeUsage, modelNamespace));
 		}
 
+
 		var typeName = _code.Escape(edmType.MetadataProperties
-								.Where(p => p.Name == ExternalTypeNameAttributeName)
-								.Select(p => (string)p.Value)
-								.FirstOrDefault())
-			?? (modelNamespace != null && edmType.NamespaceName != modelNamespace ?
-				_code.CreateFullName(_code.EscapeNamespace(edmType.NamespaceName), _code.Escape(edmType)) :
-				_code.Escape(edmType));
+			.Where(p => p.Name == EXTERNAL_TYPE_NAME_ATTRIBUTE_NAME)
+			.Select(p => (string)p.Value)
+			.FirstOrDefault())
+			?? (
+				modelNamespace != null && edmType.NamespaceName != modelNamespace
+					? _code.CreateFullName(_code.EscapeNamespace(edmType.NamespaceName), _code.Escape(edmType))
+					: _code.Escape(edmType)
+			);
 
 		if (edmType is StructuralType)
 		{
 			return typeName;
 		}
+
 
 		if (edmType is SimpleType)
 		{
@@ -416,10 +442,11 @@ public class TypeMapper
 
 			typeName = FixNamespaces(typeName);
 
-			return clrType.IsValueType && isNullable == true ?
-				String.Format(CultureInfo.InvariantCulture, "Nullable<{0}>", typeName) :
-				typeName;
+			return clrType.IsValueType && isNullable == true
+				? String.Format(CultureInfo.InvariantCulture, "Nullable<{0}>", typeName)
+				: typeName;
 		}
+
 
 		throw new ArgumentException("edmType");
 	}
@@ -434,10 +461,12 @@ public class TypeMapper
 			return primitiveType.ClrEquivalentType;
 		}
 
+
 		if (IsEnumType(edmType))
 		{
 			return GetEnumUnderlyingType(edmType).ClrEquivalentType;
 		}
+
 
 		return typeof(object);
 	}
@@ -447,7 +476,9 @@ public class TypeMapper
 		ArgumentNotNull(enumMember, "enumMember");
 		
 		var valueProperty = enumMember.GetType().GetProperty("Value");
-		return valueProperty == null ? null : valueProperty.GetValue(enumMember, null);
+		return valueProperty == null
+			? null
+			: valueProperty.GetValue(enumMember, null);
 	}
 	
 	public string GetEnumMemberName(MetadataItem enumMember)
@@ -455,7 +486,9 @@ public class TypeMapper
 		ArgumentNotNull(enumMember, "enumMember");
 		
 		var nameProperty = enumMember.GetType().GetProperty("Name");
-		return nameProperty == null ? null : (string)nameProperty.GetValue(enumMember, null);
+		return nameProperty == null
+			? null
+			: (string)nameProperty.GetValue(enumMember, null);
 	}
 
 	public System.Collections.IEnumerable GetEnumMembers(EdmType enumType)
@@ -463,9 +496,9 @@ public class TypeMapper
 		ArgumentNotNull(enumType, "enumType");
 
 		var membersProperty = enumType.GetType().GetProperty("Members");
-		return membersProperty != null 
-			? (System.Collections.IEnumerable)membersProperty.GetValue(enumType, null)
-			: Enumerable.Empty<MetadataItem>();
+		return membersProperty == null 
+			? Enumerable.Empty<MetadataItem>()
+			: (System.Collections.IEnumerable)membersProperty.GetValue(enumType, null);
 	}
 	
 	public bool EnumIsFlags(EdmType enumType)
@@ -497,6 +530,7 @@ public class TypeMapper
 			return _code.CreateLiteral(value);
 		}
 
+
 		return string.Format(CultureInfo.InvariantCulture, "new TimeSpan({0})", ((TimeSpan)value).Ticks);
 	}
 	
@@ -509,10 +543,19 @@ public class TypeMapper
 		if (types.Any(item => !hash.Add(item)))
 		{
 			_errors.Add(
-				new CompilerError(sourceFile, -1, -1, "6023",
-					String.Format(CultureInfo.CurrentCulture, CodeGenerationTools.GetResourceString("Template_CaseInsensitiveTypeConflict"))));
+				new CompilerError(
+					sourceFile,
+					-1,
+					-1,
+					"6023",
+					String.Format(CultureInfo.CurrentCulture, CodeGenerationTools.GetResourceString("Template_CaseInsensitiveTypeConflict"))
+				)
+			);
+
 			return false;
 		}
+
+
 		return true;
 	}
 	
@@ -526,7 +569,7 @@ public class TypeMapper
 	{
 		return itemCollection
 			.OfType<T>()
-			.Where(i => !i.MetadataProperties.Any(p => p.Name == ExternalTypeNameAttributeName))
+			.Where(i => !i.MetadataProperties.Any(p => p.Name == EXTERNAL_TYPE_NAME_ATTRIBUTE_NAME))
 			.OrderBy(i => i.Name);
 	}
 
@@ -543,10 +586,9 @@ public class TypeMapper
 		{
 			return ((EdmType)item).Name;
 		}
-		else
-		{
-			return ((EntityContainer)item).Name;
-		}
+
+
+		return ((EntityContainer)item).Name;
 	}
 
 	public IEnumerable<EdmProperty> GetSimpleProperties(EntityType type)

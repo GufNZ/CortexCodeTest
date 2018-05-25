@@ -127,3 +127,69 @@ GO
 CREATE UNIQUE NONCLUSTERED INDEX IX_Model_Year
 	ON dbo.Vehicle (Model, Year);
 GO
+
+
+
+CREATE PROCEDURE dbo.ListVehicles
+AS
+BEGIN
+	SELECT * FROM dbo.Vehicle;
+END
+GO
+
+CREATE PROCEDURE dbo.GetVehicle(@ID INT) AS
+BEGIN
+	SELECT * FROM dbo.Vehicle
+		WHERE ID = @ID;
+END
+GO
+
+CREATE PROCEDURE dbo.AddVehicle(
+	@Model			NVARCHAR(50),
+	@Year			SMALLINT,
+	@Description	NVARCHAR(MAX) = NULL
+) AS
+BEGIN
+	INSERT INTO dbo.Vehicle
+	(
+		Model,
+		Year,
+		Description
+	)
+	VALUES
+	(
+		@Model,
+		@Year,
+		@Description
+	);
+
+	SELECT * FROM dbo.Vehicle
+		WHERE ID = SCOPE_IDENTITY();
+END
+GO
+
+CREATE PROCEDURE dbo.UpdateVehicle(
+	@ID				INT,
+	@Model			NVARCHAR(50),
+	@Year			SMALLINT,
+	@Description	NVARCHAR(MAX) = NULL
+) AS
+BEGIN
+	UPDATE dbo.Vehicle
+	SET
+		Model = @Model,
+		Year = @Year,
+		Description = @Description
+	WHERE ID = @ID;
+
+	SELECT * FROM dbo.Vehicle
+		WHERE ID = @ID;
+END
+GO
+
+CREATE PROCEDURE dbo.RemoveVehicle(@ID INT) AS
+BEGIN
+	DELETE FROM dbo.Vehicle
+		WHERE ID = @ID;
+END
+GO

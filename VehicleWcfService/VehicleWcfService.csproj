@@ -100,6 +100,18 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\AddVehicle_Result.cs">
+      <DependentUpon>Vehicle.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\GetVehicle_Result.cs">
+      <DependentUpon>Vehicle.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\ListVehicles_Result.cs">
+      <DependentUpon>Vehicle.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\UpdateVehicle_Result.cs">
+      <DependentUpon>Vehicle.tt</DependentUpon>
+    </Compile>
     <Compile Include="Data\Vehicle1.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
